@@ -39,6 +39,8 @@ bower_components
 build/Release
 
 # Dependency directories
+backend/node_modules/
+frontend/node-modules/
 node_modules/
 jspm_packages/
 
@@ -125,3 +127,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# idea (intelli-j)
+.idea/
+frontend/.idea/
+backend/.idea/
