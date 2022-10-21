@@ -132,3 +132,4 @@ dist
 .idea/
 frontend/.idea/
 backend/.idea/
+.idea/vcs.xml
