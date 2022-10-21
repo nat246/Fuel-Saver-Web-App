@@ -133,3 +133,6 @@ dist
 frontend/.idea/
 backend/.idea/
 .idea/vcs.xml
+docker-commands.txt
+docker-compose.yaml
+.idea/vcs.xml

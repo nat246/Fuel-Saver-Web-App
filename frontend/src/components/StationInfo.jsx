@@ -25,7 +25,7 @@ const StationInfo = ({sID, gID, siteName, address}) => {
             </p>
 
             <div className="fuel_table">
-                <Table bordered={true}>
+                <Table bordered={true} hover={true}>
                     <thead>
                     <tr>
                         <th>Fuel Type</th>

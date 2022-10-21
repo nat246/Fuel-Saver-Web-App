@@ -12,39 +12,78 @@ import ReactLeafletGoogleLayer from "react-leaflet-google-layer";
 import StationInfo from "./StationInfo";
 import { formatPrice } from "../utils/formatPrice";
 import * as L from "leaflet";
+import { FormGroup, Input, Label, Table } from "reactstrap";
+import { useFetchLocation } from "../hooks/locationSearch";
 
 const Map = ({ radius, fuelId }) => {
   const [location, setLocation] = useState({ lat: -27.47003, lng: 153.02298 });
   const [siteInfo, setSiteInfo] = useState();
+  const [searchCoords, setSearchCoords] = useState();
 
   const data = useNearbyFuelSites(location, radius, fuelId);
   const fuelStations = data.stations;
 
+  const coords = useFetchLocation(searchCoords).locationData;
+
   return (
     <React.Fragment>
-      {data.loading === true ? <p><strong>Loading sites...</strong></p> : <br />}
+      {data.loading === true ? (
+        <p>
+          <strong>Loading sites...</strong>
+        </p>
+      ) : (
+        <br />
+      )}
 
-      <div id="map">
-        <MapContainer center={location} zoom={13}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+      <FormGroup
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <Label>Search</Label>
+        <Input
+          id="search"
+          name="search"
+          placeholder="Search for a location"
+          type="search"
+          onChange={(e) => {
+            const { value } = e.target;
+            setSearchCoords(value);
+          }}
+        />
+        <button
+          onClick={() => {
+            console.log(`Button submit ${coords}`);
+            setLocation(coords);
+          }}
+          type="submit"
+        >
+          Search
+        </button>
+      </FormGroup>
+        <div id="map">
+          <MapContainer center={location} zoom={13}>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
 
-          <MyLocation setLocation={setLocation} />
+            <MyLocation setLocation={setLocation} />
 
-          <Circle center={location} radius={radius} />
+            <Circle center={location} radius={radius} />
 
-          <FuelStationMarkers
-            fuelStations={fuelStations}
-            setSiteInfo={setSiteInfo}
-          />
+            <FuelStationMarkers
+              fuelStations={fuelStations}
+              setSiteInfo={setSiteInfo}
+            />
 
-          {/*<ReactLeafletGoogleLayer*/}
-          {/*  apiKey={process.env.REACT_APP_GOOGLE_MAPS_API}*/}
-          {/*/>*/}
-        </MapContainer>
-      </div>
+            {/*<ReactLeafletGoogleLayer*/}
+            {/*  apiKey={process.env.REACT_APP_GOOGLE_MAPS_API}*/}
+            {/*/>*/}
+          </MapContainer>
+        </div>
+
+        <FuelStationsTable fuelStations={fuelStations} />
 
       {siteInfo === undefined ? (
         <p>Please Click a Marker</p>
@@ -152,4 +191,31 @@ const FuelStationMarkers = ({ fuelStations, setSiteInfo }) => {
 };
 
 
+const FuelStationsTable = ({fuelStations}) => {
+  return (
+    <div className="fuel_stations_table">
+      <h3>Fuel stations in this area</h3>
+          <Table bordered={true} hover={true} responsive={true}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Price ({fuelStations[0]?.fuelDetails.fName})</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fuelStations.map((site) => {
+                return (
+                  <tr key={site.sID}>
+                    <td>{site.name}</td>
+                    <td>{site.address}</td>
+                    <td>{formatPrice(site.fuelDetails.price)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </div>
+  )
+}
 export default Map;

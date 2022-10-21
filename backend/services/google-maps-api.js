@@ -50,6 +50,13 @@ const stationsNearMe = async (query) => {
     });
 };
 
+const searchCoordinates = async (searchText) =>{
+  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchText}&key=${process.env.GOOGLE_MAPS_KEY}`
+ 
+  return await axios.get(url)
+    .then(res => res.data.results[0].geometry.location)
+}
+
 // const getNextPageResults = async (query, token) => {
 //     return await axios(stationsNearMeNextPageConfig(query, token))
 //         .then(async (res) => {
@@ -124,3 +131,4 @@ exports.getSiteImage = getSiteImage;
 exports.placeDetails = placeDetails;
 exports.stationsNearMe = stationsNearMe;
 exports.getNextPageResults = getNextPageResults;
+exports.searchCoordinates = searchCoordinates;
